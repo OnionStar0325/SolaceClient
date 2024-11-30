@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolaceClient", "SolaceClient\SolaceClient.csproj", "{0CC92512-5BAA-43E7-AA55-6E19086CB3A7}"
+	ProjectSection(ProjectDependencies) = postProject
+		{999EDB9D-1DAF-431E-A161-6D2A8FE36804} = {999EDB9D-1DAF-431E-A161-6D2A8FE36804}
+		{DDF52D0A-C093-4D90-A08E-9788CBCB94A1} = {DDF52D0A-C093-4D90-A08E-9788CBCB94A1}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolaceManagement", "SolaceManagement\SolaceManagement.csproj", "{999EDB9D-1DAF-431E-A161-6D2A8FE36804}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolaceRestClient", "SolaceRestClient\SolaceRestClient.csproj", "{DDF52D0A-C093-4D90-A08E-9788CBCB94A1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolaceCliClient", "SolaceCliClient\SolaceCliClient.csproj", "{39C8E562-8F2E-48C9-8572-19B6BBDA0265}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonUtils", "CommonUtils\CommonUtils.csproj", "{B6BE09D9-A78F-4025-A40C-389582A99404}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루션 항목", "{912FB310-F7DF-4CD9-992E-3584D7B5A592}"
+	ProjectSection(SolutionItems) = preProject
+		icon.ico = icon.ico
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0CC92512-5BAA-43E7-AA55-6E19086CB3A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CC92512-5BAA-43E7-AA55-6E19086CB3A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CC92512-5BAA-43E7-AA55-6E19086CB3A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CC92512-5BAA-43E7-AA55-6E19086CB3A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{999EDB9D-1DAF-431E-A161-6D2A8FE36804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{999EDB9D-1DAF-431E-A161-6D2A8FE36804}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{999EDB9D-1DAF-431E-A161-6D2A8FE36804}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{999EDB9D-1DAF-431E-A161-6D2A8FE36804}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDF52D0A-C093-4D90-A08E-9788CBCB94A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDF52D0A-C093-4D90-A08E-9788CBCB94A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDF52D0A-C093-4D90-A08E-9788CBCB94A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDF52D0A-C093-4D90-A08E-9788CBCB94A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39C8E562-8F2E-48C9-8572-19B6BBDA0265}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39C8E562-8F2E-48C9-8572-19B6BBDA0265}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39C8E562-8F2E-48C9-8572-19B6BBDA0265}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39C8E562-8F2E-48C9-8572-19B6BBDA0265}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6BE09D9-A78F-4025-A40C-389582A99404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6BE09D9-A78F-4025-A40C-389582A99404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6BE09D9-A78F-4025-A40C-389582A99404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6BE09D9-A78F-4025-A40C-389582A99404}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {73409B33-6100-4A3A-9761-0CA971DFCAEC}
+	EndGlobalSection
+EndGlobal

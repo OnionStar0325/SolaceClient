@@ -1,0 +1,13 @@
+{
+  "HostName": "localhost",
+  "VPNName": "default",
+  "QueueName": "DEV/QUEUE",
+  "UserName": "admin",
+  "Password": "admin",
+  "SEMPHostName": "http://localhost:8084",
+  "ReplyQueueName": "REPLY/DEV/QUEUE",
+  "TimeKeyVariable": "TimeKey",
+  "ExcludePatterns": [
+    "SOME PATTERN"
+  ]
+}

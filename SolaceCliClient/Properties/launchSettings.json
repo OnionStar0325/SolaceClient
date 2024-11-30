@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SolaceCliClient": {
+      "commandName": "Project",
+      "commandLineArgs": "Template.json\r\nvar1"
+    }
+  }
+}
