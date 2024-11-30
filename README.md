@@ -1,40 +1,40 @@
 # SolaceClient
 
-ÀÌ ÇÁ·ÎÁ§Æ®´Â PubSub+Event Broker Á¦Ç°ÀÎ [solace](https://solace.com/ko/products/event-broker) ¼­¹ö·Î ¸Ş½ÃÁö¸¦ ¼Û½Å(Send) ¹× Å¥ ºê¶ó¿ìÂ¡À» ÇÒ ¼ö ÀÖ´Â
-DOTNET 6 ±â¹İÀÇ Winform ÇÁ·ÎÁ§Æ® ÀÔ´Ï´Ù.
+ì´ í”„ë¡œì íŠ¸ëŠ” PubSub+Event Broker ì œí’ˆì¸ [solace](https://solace.com/ko/products/event-broker) ì„œë²„ë¡œ ë©”ì‹œì§€ë¥¼ ì†¡ì‹ (Send) ë° í ë¸Œë¼ìš°ì§•ì„ í•  ìˆ˜ ìˆëŠ”
+DOTNET 6 ê¸°ë°˜ì˜ Winform í”„ë¡œì íŠ¸ ì…ë‹ˆë‹¤.
 
->**SolaceManagement ÇÁ·ÎÁ§Æ®ÀÇ ÄÚµå´Â solace¿¡¼­ Á¦°øÇÏ´Â [Sample Project](https://github.com/SolaceSamples/solace-samples-dotnet)¸¦ Âü°íÇß½À´Ï´Ù.**
-## Áö¿ø OS
-DOTNET 6 ¸¦ Áö¿øÇÏ´Â Windows °è¿­ OS
+>**SolaceManagement í”„ë¡œì íŠ¸ì˜ ì½”ë“œëŠ” solaceì—ì„œ ì œê³µí•˜ëŠ” [Sample Project](https://github.com/SolaceSamples/solace-samples-dotnet)ë¥¼ ì°¸ê³ í–ˆìŠµë‹ˆë‹¤.**
+## ì§€ì› OS
+DOTNET 6 ë¥¼ ì§€ì›í•˜ëŠ” Windows ê³„ì—´ OS
 
-## ºôµå ¹æ¹ı
+## ë¹Œë“œ ë°©ë²•
 
-### »çÀü ÁØºñ
-ÀÌ ÇÁ·ÎÁ§Æ®¸¦ ºôµåÇÏ±â À§ÇØ¼± DOTNET 6.0 SDK°¡ ¼³Ä¡µÇ¾î¾ß ÇÕ´Ï´Ù. 
+### ì‚¬ì „ ì¤€ë¹„
+ì´ í”„ë¡œì íŠ¸ë¥¼ ë¹Œë“œí•˜ê¸° ìœ„í•´ì„  DOTNET 6.0 SDKê°€ ì„¤ì¹˜ë˜ì–´ì•¼ í•©ë‹ˆë‹¤. 
 [DOTNET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
 
-### ºôµå ÀıÂ÷
+### ë¹Œë“œ ì ˆì°¨
 
 1.Project Clone
 ```
 git clone https://github.com/OnionStar0325/SolaceClient.git
 ```
 
-2.Project ¹èÆ÷
-DOTNET ¼Ö·ç¼Ç À§Ä¡¿¡¼­ ¾Æ·¡ ¸í·ÉÀ» ¼öÇà
+2.Project ë°°í¬
+DOTNET ì†”ë£¨ì…˜ ìœ„ì¹˜ì—ì„œ ì•„ë˜ ëª…ë ¹ì„ ìˆ˜í–‰
 ```shell
-dotnet build -P:Configuration=Release
+dotnet publish -P:Configuration=Release
 ```
 
-3.½ÇÇà ÆÄÀÏ À§Ä¡
-¹èÆ÷°¡ Á¤»óÀûÀ¸·Î ¿Ï·áµÇ¾ú´Ù¸é, ¾Æ·¡ À§Ä¡¿¡ Winform ÇÁ·Î±×·¥ÀÌ »ı¼ºµË´Ï´Ù. 
+3.ì‹¤í–‰ íŒŒì¼ ìœ„ì¹˜
+ë°°í¬ê°€ ì •ìƒì ìœ¼ë¡œ ì™„ë£Œë˜ì—ˆë‹¤ë©´, ì•„ë˜ ìœ„ì¹˜ì— Winform í”„ë¡œê·¸ë¨ì´ ìƒì„±ë©ë‹ˆë‹¤. 
 ```shell
-[DOTNET ¼Ö·ç¼Ç]\output\Release\net6.0-windows\publish\SolaceClient.exe
+[DOTNET ì†”ë£¨ì…˜]\output\Release\net6.0-windows\publish\SolaceClient.exe
 ```
 
-## »ç¿ë ¹æ¹ı
+## ì‚¬ìš© ë°©ë²•
 
-1. Solace Á¢¼ÓÁ¤º¸(connectioninfo.json)
+1. Solace ì ‘ì†ì •ë³´(connectioninfo.json)
 ```JSON
 {
   "HostName": "SOLACE SERVER HOSTNAME",
@@ -50,12 +50,12 @@ dotnet build -P:Configuration=Release
   ]
 }
 ```
-º¯¼ö »ç¿ë ¹æ¹ı
-> ¸Ş½ÃÁö SEND½Ã ${º¯¼ö¸í} ÀÇ Çü½ÄÀ¸·Î º¯¼ö¸¦ »ç¿ëÇÒ ¼ö ÀÖ½À´Ï´Ù.
+ë³€ìˆ˜ ì‚¬ìš© ë°©ë²•
+> ë©”ì‹œì§€ SENDì‹œ ${ë³€ìˆ˜ëª…} ì˜ í˜•ì‹ìœ¼ë¡œ ë³€ìˆ˜ë¥¼ ì‚¬ìš©í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 
-2. Solace Logging Á¤º¸(log4net.config)
-Solace Client´Â log4net ¶óÀÌºê·¯¸®¸¦ »ç¿ëÇÏ°í ÀÖ½À´Ï´Ù. 
-·Î±× ¼³Á¤Á¤º¸´Â [config-examples](https://logging.apache.org/log4net/release/config-examples.html)¸¦ Âü°í ÇØ ÁÖ½Ê½Ã¿À.
+2. Solace Logging ì •ë³´(log4net.config)
+Solace ClientëŠ” log4net ë¼ì´ë¸ŒëŸ¬ë¦¬ë¥¼ ì‚¬ìš©í•˜ê³  ìˆìŠµë‹ˆë‹¤. 
+ë¡œê·¸ ì„¤ì •ì •ë³´ëŠ” [config-examples](https://logging.apache.org/log4net/release/config-examples.html)ë¥¼ ì°¸ê³  í•´ ì£¼ì‹­ì‹œì˜¤.
 
 3. Solace Client UI
 ![image](https://github.com/user-attachments/assets/d2a4d7d6-3766-4789-b51c-b72ab650f2f0)
@@ -63,4 +63,4 @@ Solace Client´Â log4net ¶óÀÌºê·¯¸®¸¦ »ç¿ëÇÏ°í ÀÖ½À´Ï´Ù.
 ## Revision History
 
 ### v0.1
-ÃÖÃÊ ÇÁ·ÎÁ§Æ® »ı¼º
+ìµœì´ˆ í”„ë¡œì íŠ¸ ìƒì„±
