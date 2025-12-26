@@ -15,14 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolaceRestClient", "SolaceR
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SolaceCliClient", "SolaceCliClient\SolaceCliClient.csproj", "{39C8E562-8F2E-48C9-8572-19B6BBDA0265}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonUtils", "CommonUtils\CommonUtils.csproj", "{B6BE09D9-A78F-4025-A40C-389582A99404}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "솔루션 항목", "솔루션 항목", "{912FB310-F7DF-4CD9-992E-3584D7B5A592}"
-	ProjectSection(SolutionItems) = preProject
-		icon.ico = icon.ico
-		LICENSE = LICENSE
-		README.md = README.md
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonUtils", "CommonUtils\CommonUtils.csproj", "{B6BE09D9-A78F-4025-A40C-389582A99404}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

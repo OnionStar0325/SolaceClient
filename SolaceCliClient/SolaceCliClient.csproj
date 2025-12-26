@@ -6,8 +6,7 @@
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <BaseOutputPath>..\output</BaseOutputPath>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <BaseOutputPath>bin</BaseOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,10 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="6.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,7 +23,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Template.json">
+    <None Update="Case1.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="connectioninfo.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

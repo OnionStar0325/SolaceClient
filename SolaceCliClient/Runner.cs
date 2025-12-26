@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using CommandLine;
+using log4net;
 using log4net.Config;
 using SolaceManagement;
 using SolaceSystems.Solclient.Messaging;
@@ -10,39 +11,68 @@ namespace SolaceCliClient
     {
         static ILog logger = LogManager.GetLogger(typeof(Runner));
 
-        public ConnectionInfo ConnInfo { get; set; }
+        public static ConnectionInfoList ConnInfoList { get; set; }
         public IContext Context { get; set; }
 
         public static void Main(String[] args)
         {
-            XmlConfigurator.Configure(new FileInfo("log4net.config"));
-            Execute(args);
+            
+            Parser.Default.ParseArguments<CommandLineOptions>(args)
+                            .WithParsed(Execute)
+                            .WithNotParsed(HandleParseError);
         }
 
-        public static void Execute(String[] args)
+        private static void HandleParseError(IEnumerable<Error> enumerable)
         {
-            if (args.Length <= 0)
-            {
-                Console.Out.WriteLine("SolaceCliClient [JSON FILE LOCATION] [PARAM1...]");
-                return;
-            }
+            return;
+;        }
+
+        public static void Execute(CommandLineOptions options)
+        {
+            XmlConfigurator.Configure(new FileInfo("log4net.config"));
             logger.Info("Initialize");
+
+            ConnectionInfo connInfo = null;
 
             var instance = new Runner();
             instance.Initialize();
 
-            if(string.IsNullOrEmpty(instance.ConnInfo.QueueName))
+            if (string.IsNullOrEmpty(options.Alias) == false)
+            {
+                var selectedList = ConnInfoList.ConnInfoList.Where(r => string.Equals(r.Alias, options.Alias)).ToList();
+                
+                if (selectedList == null || selectedList.Count <= 0)
+                {
+                    Console.Error.WriteLine(string.Format("Alias [{0}] is not defined", options.Alias));
+                    return;
+                } else
+                {
+                    logger.Info(string.Format("Connecting Alias [{0}] ...", options.Alias));
+                    connInfo = selectedList.FirstOrDefault();
+                }
+            }
+            else
+            {
+                connInfo = ConnInfoList.ConnInfoList.FirstOrDefault();
+            }
+
+            if(string.IsNullOrEmpty(connInfo.TimeKeyVariable))
+            {
+                connInfo.TimeKeyVariable = ConnInfoList.TimeKeyVariable;
+            }
+
+            if(string.IsNullOrEmpty(connInfo.QueueName))
             {
                 var message = "QueueName is not defined";
                 logger.Error(message);
                 return;
             }
 
-            var queueProducer = new QueueProducer(instance.ConnInfo);
+            var queueProducer = new QueueProducer(connInfo);
             queueProducer.Run(instance.Context);
 
-            logger.Info(string.Format("Load JSON File [{0}]", args[0]));
-            var messages = Messages.LoadConfiguration(args[0]);
+            logger.Info(string.Format("Load JSON File [{0}]", options.FileName));
+            var messages = Messages.LoadConfiguration(options.FileName);
 
             logger.Info(String.Format("{0} message(s) loaded", messages?.Message.Count));
 
@@ -50,14 +80,16 @@ namespace SolaceCliClient
             {
                 string content = message;
 
-                for(int i = 1; i< args.Length; i++)
+                var inputArgs = options.Inputs.ToArray<string>();
+
+                for(int i = 0; i< inputArgs.Length; i++)
                 {
-                    content = content.Replace("${" + i + "}", args[i]);
+                    content = content.Replace("${" + (i+1) + "}", inputArgs[i]);
                 }
 
-                if (string.IsNullOrEmpty(instance.ConnInfo.TimeKeyVariable) == false)
+                if (string.IsNullOrEmpty(connInfo.TimeKeyVariable) == false)
                 {
-                    content = content.Replace("${" + instance.ConnInfo.TimeKeyVariable + "}", DateTime.Now.ToString("yyyyMMddHHmmssfffffff"));
+                    content = content.Replace("${" + connInfo.TimeKeyVariable + "}", DateTime.Now.ToString("yyyyMMddHHmmssfffffff"));
                 }
 
                 var regex = new Regex(@"\$\[((,|[0-9])+)\]");
@@ -94,7 +126,7 @@ namespace SolaceCliClient
         {
             InitializeContext();
             Context = ContextFactory.Instance.CreateContext(new ContextProperties(), null);
-            ConnInfo = ConnectionInfo.LoadConfiguration("connectioninfo.json");
+            ConnInfoList =  ConnectionInfoList.LoadConfiguration("connectioninfo.json");
         }
         private void InitializeContext()
         {

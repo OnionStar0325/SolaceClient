@@ -1,0 +1,28 @@
+{
+  "ConnInfoList": [
+    {
+      "Alias": "Default",
+      "HostName": "172.22.85.89",
+      "VPNName": "default",
+      "QueueName": "DEV/QUEUE",
+      "UserName": "admin",
+      "Password": "admin",
+      "SEMPHostName": "http://127.0.0.1:8084",
+      "ReplyQueueName": "REPLY/DEV/QUEUE"
+    },
+    {
+      "HostName": "172.22.85.89",
+      "VPNName": "default",
+      "QueueName": "REPLY/DEV/QUEUE",
+      "UserName": "admin",
+      "Password": "admin",
+      "SEMPHostName": "http://127.0.0.1:8084",
+      "ReplyQueueName": "REPLY/DEV/QUEUE"
+    }
+  ],
+  "TimeKeyVariable": "TimeKey",
+  "ExcludePatterns": [
+    "\"TESTID\"",
+    "def"
+  ]
+}

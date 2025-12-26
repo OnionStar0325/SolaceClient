@@ -142,11 +142,11 @@ namespace SolaceManagement
                 {
                     replyQueue = ContextFactory.Instance.CreateQueue(replyQueueName);
                     message.CorrelationId = Guid.NewGuid().ToString();
-
+                    message.ReplyTo = replyQueue;
                     replyFlow = session.CreateFlow(new FlowProperties()
                     {
                         AckMode = MessageAckMode.ClientAck,
-                        Selector = "CorrelationId='" + message.CorrelationId + "'"
+                        Selector = "CorrelationId= '" + message.CorrelationId + "' "
                     },
                     replyQueue, null, HandleMessageEvent, HandleFlowEvent);
                     replyFlow.Start();

@@ -21,7 +21,6 @@ namespace SolaceRestClient
         {
             vpnName = vpnName.Replace("/", "%2F");
             var request = new RestRequest("monitor/msgVpns/" + vpnName + "/queues?count=1000&select=queueName,accessType,permission");
-            
             return _client.Get<Queues>(request);
         }
 

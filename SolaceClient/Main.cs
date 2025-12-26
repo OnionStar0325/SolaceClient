@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using SolaceManagement;
 using SolaceRestClient;
 using SolaceSystems.Solclient.Messaging;
+using System.Security.Permissions;
 using System.Text.RegularExpressions;
 
 namespace SolaceClient
@@ -10,7 +11,12 @@ namespace SolaceClient
     public partial class Main : Form
     {
         private QueueProducer QueueProducer { get; set; }
-        private ConnectionInfo ConnInfo { get; set; }
+        private ConnectionInfoList ConnInfoList { get; set; }
+        private ConnectionInfo CurrentConnInfo { get; set; }
+
+        private List<QueueBrowsePopup> _activePopupList = new List<QueueBrowsePopup>();
+        private List<QueueBrowsePopup> ActivePopupList { get { return _activePopupList; } }
+
         private IContext Context { get; set; }
         private IndecatedList<string> _sentMessages = new IndecatedList<string>();
 
@@ -33,28 +39,82 @@ namespace SolaceClient
         {
             InitializeContext();
             Context = ContextFactory.Instance.CreateContext(new ContextProperties(), null);
-            ConnInfo = ConnectionInfo.LoadConfiguration("connectioninfo.json");
-            QueueProducer = new QueueProducer(ConnInfo);
-            QueueProducer.Run(Context);
+            ConnInfoList = ConnectionInfoList.LoadConfiguration("connectioninfo.json");
 
-            txtSendQueue.Text = ConnInfo.QueueName;
-            txtReplyQueue.Text = ConnInfo.ReplyQueueName;
+            if (ConnInfoList != null && ConnInfoList.ConnInfoList.Count > 0)
+            {
+                Connect(ConnInfoList.ConnInfoList.FirstOrDefault());
+
+                int aliasSequence = 1;
+                foreach (var connInfo in ConnInfoList.ConnInfoList)
+                {
+                    if (string.IsNullOrEmpty(connInfo.Alias))
+                    {
+                        connInfo.Alias = string.Format("Noname-{0}", aliasSequence++);
+                    }
+                    if (string.IsNullOrEmpty(connInfo.TimeKeyVariable))
+                    {
+                        connInfo.TimeKeyVariable = ConnInfoList.TimeKeyVariable;
+                    }
+                    if (connInfo.ExcludePatterns == null || connInfo.ExcludePatterns.Count <= 0 && ConnInfoList.ExcludePatterns != null)
+                    {
+                        connInfo.ExcludePatterns = ConnInfoList.ExcludePatterns.ToList();
+                    }
+                }
+                cmbConnectionList.DataSource = ConnInfoList.ConnInfoList;
+                cmbConnectionList.DisplayMember = "Alias";
+            }
         }
+
         private void AddSendMessage(string message)
         {
-            if(_sentMessages.HasItem)
+            if (_sentMessages.HasItem)
             {
                 if (_sentMessages.Current.Equals(message))
                 {
                     return;
-                }else
+                }
+                else
                 {
                     _sentMessages.Add(message);
                 }
-            }else
+            }
+            else
             {
                 _sentMessages.Add(message);
             }
+        }
+
+        private void ChangeConnection(ConnectionInfo info)
+        {
+            while(ActivePopupList.Count > 0)
+            {
+                var popup = ActivePopupList[0];
+                popup.Close();
+            }
+
+            Disconnect();
+            Connect(info);
+        }
+
+        private void Connect(ConnectionInfo info)
+        {
+            CurrentConnInfo = info;
+            QueueProducer = new QueueProducer(info);
+            QueueProducer.Run(Context);
+
+            txtSendQueue.Text = CurrentConnInfo.QueueName;
+            txtReplyQueue.Text = CurrentConnInfo.ReplyQueueName;
+        }
+
+        private void Disconnect()
+        {
+            if (CurrentConnInfo == null)
+            {
+                return;
+            }
+
+            QueueProducer.Dispose();
         }
 
         private void btnSend_Click(object sender, EventArgs e)
@@ -64,9 +124,9 @@ namespace SolaceClient
 
             AddSendMessage(content);
 
-            if (string.IsNullOrEmpty(ConnInfo.TimeKeyVariable) == false)
+            if (string.IsNullOrEmpty(CurrentConnInfo.TimeKeyVariable) == false)
             {
-                content = content.Replace("${" + ConnInfo.TimeKeyVariable + "}", DateTime.Now.ToString("yyyyMMddHHmmssfffffff"));
+                content = content.Replace("${" + CurrentConnInfo.TimeKeyVariable + "}", DateTime.Now.ToString("yyyyMMddHHmmssfffffff"));
             }
 
             if (rbtnPublish.Checked)
@@ -128,8 +188,8 @@ namespace SolaceClient
 
         private void btnGetInfo_Click(object sender, EventArgs e)
         {
-            SmtpRestClient client = new SmtpRestClient(ConnInfo.SEMPHostName + "/SEMP/v2", ConnInfo.UserName, ConnInfo.Password);
-            var queueList = client.GetQueueList(ConnInfo.VPNName);
+            SmtpRestClient client = new SmtpRestClient(CurrentConnInfo.SEMPHostName + "/SEMP/v2", CurrentConnInfo.UserName, CurrentConnInfo.Password);
+            var queueList = client.GetQueueList(CurrentConnInfo.VPNName);
 
             var popup = new QueueListPopup();
             popup.LoadQueues(queueList.data);
@@ -138,18 +198,28 @@ namespace SolaceClient
 
         private void btnBrowse_Click(object sender, EventArgs e)
         {
-            var queueBrowser = new QueueBrowsePopup(Context, ConnInfo);
+            var queueBrowser = new QueueBrowsePopup(Context, CurrentConnInfo);
+            queueBrowser.FormClosed += QueueBrowser_FormClosed;
+            ActivePopupList.Add(queueBrowser);
             queueBrowser.Show();
+        }
+
+        private void QueueBrowser_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            if (ActivePopupList.Contains(sender as QueueBrowsePopup))
+            {
+                ActivePopupList.Remove(sender as QueueBrowsePopup);
+            }
         }
 
         private void txtContent_KeyUp(object sender, KeyEventArgs e)
         {
-            if(e.Alt == false)
+            if (e.Alt == false)
             {
                 return;
             }
 
-            if(e.KeyCode == Keys.Up)
+            if (e.KeyCode == Keys.Up)
             {
                 if (_sentMessages.Count == 1)
                 {
@@ -166,7 +236,7 @@ namespace SolaceClient
             }
             else if (e.KeyCode == Keys.Down)
             {
-                if(_sentMessages.HasNext == false)
+                if (_sentMessages.HasNext == false)
                 {
                     return;
                 }
@@ -176,8 +246,18 @@ namespace SolaceClient
             {
                 return;
             }
-                
+
             txtContent.SelectAll();
+        }
+
+        private void cmbConnectionList_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            var combo = sender as ComboBox;
+            
+            if( combo.SelectedItem != CurrentConnInfo)
+            {
+                ChangeConnection(combo.SelectedItem as ConnectionInfo);
+            }
         }
     }
 }

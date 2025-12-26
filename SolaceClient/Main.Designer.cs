@@ -51,6 +51,8 @@
             btnDelEscape = new Button();
             txtReply = new TextBox();
             panel4 = new Panel();
+            cmbConnectionList = new ComboBox();
+            label3 = new Label();
             panel1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox1.SuspendLayout();
@@ -60,6 +62,7 @@
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
             panel3.SuspendLayout();
+            panel4.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -296,11 +299,31 @@
             // 
             // panel4
             // 
+            panel4.Controls.Add(cmbConnectionList);
+            panel4.Controls.Add(label3);
             panel4.Dock = DockStyle.Bottom;
             panel4.Location = new Point(0, 91);
             panel4.Name = "panel4";
             panel4.Size = new Size(800, 42);
             panel4.TabIndex = 5;
+            // 
+            // cmbConnectionList
+            // 
+            cmbConnectionList.FormattingEnabled = true;
+            cmbConnectionList.Location = new Point(49, 10);
+            cmbConnectionList.Name = "cmbConnectionList";
+            cmbConnectionList.Size = new Size(132, 23);
+            cmbConnectionList.TabIndex = 1;
+            cmbConnectionList.SelectionChangeCommitted += cmbConnectionList_SelectionChangeCommitted;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(9, 13);
+            label3.Name = "label3";
+            label3.Size = new Size(36, 15);
+            label3.TabIndex = 0;
+            label3.Text = "Conn";
             // 
             // Main
             // 
@@ -326,6 +349,8 @@
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             panel3.ResumeLayout(false);
+            panel4.ResumeLayout(false);
+            panel4.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -353,5 +378,7 @@
         private Button btnGetInfo;
         private Button btnBrowse;
         private TextBox txtContent;
+        private ComboBox cmbConnectionList;
+        private Label label3;
     }
 }

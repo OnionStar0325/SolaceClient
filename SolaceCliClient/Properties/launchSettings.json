@@ -2,7 +2,7 @@
   "profiles": {
     "SolaceCliClient": {
       "commandName": "Project",
-      "commandLineArgs": "Template.json\r\nvar1"
+      "commandLineArgs": "-f Case1.json\r\n-a Default\r\nabc\r\ndef\r\n"
     }
   }
 }

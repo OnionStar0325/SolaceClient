@@ -15,13 +15,4 @@
       <PackageReference Include="SolaceSystems.Solclient.Messaging" Version="10.25.0" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Update="connectioninfo.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="log4net.config">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
 </Project>

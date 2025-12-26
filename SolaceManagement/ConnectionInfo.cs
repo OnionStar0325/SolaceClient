@@ -4,6 +4,7 @@ namespace SolaceManagement;
 
 public class ConnectionInfo
 {
+    public string Alias { get; set; }
     public string HostName { get; set; }
     public string VPNName { get; set; }
     public string QueueName { get; set; }
@@ -12,8 +13,9 @@ public class ConnectionInfo
     public string SEMPHostName { get; set; }
     public string ReplyQueueName { get; set; }
     public string TimeKeyVariable { get; set; }
-
     public List<string> ExcludePatterns { get; set; }
+
+    public int MaximumRowHeight { get; set; }
 
     public static ConnectionInfo LoadConfiguration(string filePath)
     {
