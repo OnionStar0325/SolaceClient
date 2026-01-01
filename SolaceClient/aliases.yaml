@@ -1,0 +1,10 @@
+﻿- Alias: tst
+  Keyword: TestKeyword
+- Alias: my
+  Keyword: MyLongKeyword
+- Alias: myjson;
+  Keyword: |
+    {
+        abc: "ABC",
+        def: "DEF"
+    }  

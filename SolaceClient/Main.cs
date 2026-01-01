@@ -40,6 +40,7 @@ namespace SolaceClient
             InitializeContext();
             Context = ContextFactory.Instance.CreateContext(new ContextProperties(), null);
             ConnInfoList = ConnectionInfoList.LoadConfiguration("connectioninfo.json");
+            AliasList.LoadAliases();
 
             if (ConnInfoList != null && ConnInfoList.ConnInfoList.Count > 0)
             {
@@ -82,6 +83,78 @@ namespace SolaceClient
             else
             {
                 _sentMessages.Add(message);
+            }
+        }
+
+        private void ExpandAlias(Keys lastKey)
+        {
+            try
+            {
+                int cursorPosition = txtContent.SelectionStart;
+                string text = txtContent.Text;
+
+                // 1. Identify where the word ends. 
+                // We assume the cursor is AFTER the delimiter (Space/Enter).
+                // So search backwards from cursorPosition - 1 for the first non-whitespace character.
+
+                int i = cursorPosition - 1;
+
+                // Skip immediate trailing whitespace (the trigger(s))
+                while (i >= 0 && i < text.Length && char.IsWhiteSpace(text[i]))
+                {
+                    i--;
+                }
+
+                // If i < 0, we only have whitespace or empty string before cursor
+                if (i < 0) return;
+
+                int endWordIndex = i;
+
+                // 2. Find the start of the word
+                while (i >= 0 && !char.IsWhiteSpace(text[i]))
+                {
+                    i--;
+                }
+
+                int startWordIndex = i + 1;
+                int length = endWordIndex - startWordIndex + 1;
+
+                if (length <= 0) return;
+
+                string word = text.Substring(startWordIndex, length);
+
+                // 3. Check for alias match
+                var match = AliasList.Aliases.FirstOrDefault(a => a.Alias == word);
+                if (match != null)
+                {
+                    // 4. Replace using explicit indices to avoid selection issues
+                    // Select the word range
+                    txtContent.Select(startWordIndex, length);
+
+                    // Replace with keyword
+                    txtContent.SelectedText = match.Keyword.Replace("\r\n", "\n")
+                                                           .Replace("\r", "\n")
+                                                           .Replace("\n", "\r\n"); ;
+
+                    // 5. Restore cursor / handle trailing space
+                    // SelectedText places cursor at the end of the inserted text.
+                    // But we still have the trailing whitespace (Space/Enter) that triggered this.
+                    // The text content shifted, but the trailing whitespace should remain "after" the insertion 
+                    // if we only replaced the word.
+                    // However, we need to ensure the cursor is placed AFTER the trailing whitespace 
+                    // so typing continues normally.
+
+                    // Calculate where the cursor implies it should be:
+                    // new cursor = startWordIndex + match.Keyword.Length + (original_cursor - (endWordIndex + 1))
+
+                    int trailingWhitespaceLen = cursorPosition - (endWordIndex + 1);
+                    txtContent.SelectionStart = startWordIndex + match.Keyword.Length + trailingWhitespaceLen;
+                    txtContent.SelectionLength = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error expanding alias: {ex.Message}");
             }
         }
 
@@ -214,6 +287,12 @@ namespace SolaceClient
 
         private void txtContent_KeyUp(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Space || e.KeyCode == Keys.Enter)
+            {
+                ExpandAlias(e.KeyCode);
+                return;
+            }
+
             if (e.Alt == false)
             {
                 return;
