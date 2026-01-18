@@ -2,17 +2,14 @@
 using Newtonsoft.Json;
 using SolaceManagement;
 using SolaceSystems.Solclient.Messaging;
-using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
 
 namespace SolaceClient
 {
     public partial class QueueBrowsePopup : Form
     {
         static ILog logger = LogManager.GetLogger(typeof(QueueBrowsePopup));
-        private int _maximumRowHeight = 50;
 
         public bool OnBrowsing { get; set; }
         public bool Pause { get; set; }
@@ -23,8 +20,7 @@ namespace SolaceClient
 
         List<Regex> ExcludePatterns = new List<Regex>();
 
-        private List<Tuple<String, String>> _contentBuffer = new List<Tuple<String, String>>();
-        private DataTable _contentDataTable;
+        private List<string> _contentBuffer = new List<string>();
 
         public QueueBrowsePopup(IContext context, ConnectionInfo info)
         {
@@ -59,17 +55,30 @@ namespace SolaceClient
         {
             string filterText = txtFilter.Text.Trim();
 
+            // Clear previous highlights
+            grdContent.SelectAll();
+            grdContent.SelectionBackColor = grdContent.BackColor;
+            grdContent.DeselectAll();
+
             if (string.IsNullOrEmpty(filterText))
             {
-                _contentDataTable.DefaultView.RowFilter = string.Empty; // 필터 해제
                 return;
             }
 
-            // 작은따옴표 이스케이프
-            filterText = filterText.Replace("'", "''");
+            int start = 0;
+            while (start < grdContent.Text.Length)
+            {
+                int wordStartIndex = grdContent.Find(filterText, start, RichTextBoxFinds.None);
+                if (wordStartIndex == -1)
+                {
+                    break;
+                }
+                grdContent.SelectionStart = wordStartIndex;
+                grdContent.SelectionLength = filterText.Length;
+                grdContent.SelectionBackColor = Color.Yellow;
 
-            _contentDataTable.DefaultView.RowFilter =
-                $"Log LIKE '%{filterText}%'";
+                start = wordStartIndex + filterText.Length;
+            }
         }
 
         private void AutoScrollToBottom()
@@ -79,28 +88,15 @@ namespace SolaceClient
                 return;
             }
 
-            if (grdContent.Rows.Count > 0)
-            {
-                int lastRow = grdContent.Rows.Count - 1;
-                grdContent.FirstDisplayedScrollingRowIndex = lastRow;
-            }
+            grdContent.SelectionStart = grdContent.Text.Length;
+            grdContent.ScrollToCaret();
         }
 
 
         private void QueueBrowsePopup_Load(object sender, EventArgs e)
         {
-            _contentDataTable = new DataTable();
-            _contentDataTable.Columns.Add("Message", typeof(string));
-            _contentDataTable.Columns.Add("Log", typeof(string));
-
-            grdContent.AutoGenerateColumns = true;
-            grdContent.DataSource = _contentDataTable.DefaultView;
-
-            grdContent.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            grdContent.Columns[0].Width = 240;
-            grdContent.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
-
-            grdContent.AllowUserToAddRows = false;
+            grdContent.ReadOnly = true;
+            grdContent.ScrollBars = RichTextBoxScrollBars.ForcedVertical;
         }
 
         private void btnListen_Click(object sender, EventArgs e)
@@ -142,11 +138,13 @@ namespace SolaceClient
 
             lock (_contentBuffer)
             {
+                var sb = new StringBuilder();
                 while (_contentBuffer.Count > 0)
                 {
-                    _contentDataTable.Rows.Add(_contentBuffer[0].Item1, _contentBuffer[0].Item2);
+                    sb.AppendLine(_contentBuffer[0]);
                     _contentBuffer.RemoveAt(0);
                 }
+                grdContent.AppendText(sb.ToString());
             }
             AutoScrollToBottom();
 
@@ -181,7 +179,7 @@ namespace SolaceClient
                         catch { }
 
                     }
-                    var log = new Tuple<string, string>(String.Format("[{0}] Message ID[{1}]", DateTime.Now.ToString("yyyyMMdd HH:mm:ss.fff"), e.Message.ADMessageId), content);
+                    var log = String.Format("[{0}] Message ID[{1}]\n{2}\n", DateTime.Now.ToString("yyyyMMdd HH:mm:ss.fff"), e.Message.ADMessageId, content);
                     logger.Info(String.Format("[{0}] {1}", txtQueue.Text, content));
 
                     lock (_contentBuffer)
@@ -190,11 +188,13 @@ namespace SolaceClient
 
                         if (Pause == false)
                         {
+                            var sb = new StringBuilder();
                             while (_contentBuffer.Count > 0)
                             {
-                                _contentDataTable.Rows.Add(_contentBuffer[0].Item1, _contentBuffer[0].Item2);
+                                sb.AppendLine(_contentBuffer[0]);
                                 _contentBuffer.RemoveAt(0);
                             }
+                            grdContent.AppendText(sb.ToString());
 
                             AutoScrollToBottom();
                         }
@@ -210,8 +210,10 @@ namespace SolaceClient
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            _contentDataTable.Rows.Clear();
+            grdContent.Clear();
         }
+
+
 
         private void chkFilter_CheckedChanged(object sender, EventArgs e)
         {
@@ -244,14 +246,6 @@ namespace SolaceClient
         private void chkAutoScroll_CheckedChanged(object sender, EventArgs e)
         {
             AutoScrollToBottom();
-        }
-
-        private void grdContent_RowHeightInfoNeeded(object sender, DataGridViewRowHeightInfoNeededEventArgs e)
-        {
-            if (e.Height > _maximumRowHeight )
-            {
-                e.Height = _maximumRowHeight;
-            }
         }
     }
 }

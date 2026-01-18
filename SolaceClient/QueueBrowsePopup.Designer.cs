@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(QueueBrowsePopup));
             pnlTop = new Panel();
             chkAutoScroll = new CheckBox();
@@ -41,11 +40,10 @@
             txtFilter = new TextBox();
             panel2 = new Panel();
             btnClear = new Button();
-            grdContent = new DataGridView();
+            grdContent = new RichTextBox();
             pnlTop.SuspendLayout();
             pnlFilter.SuspendLayout();
             panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)grdContent).BeginInit();
             SuspendLayout();
             // 
             // pnlTop
@@ -166,27 +164,12 @@
             // 
             // grdContent
             // 
-            grdContent.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            grdContent.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            grdContent.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            grdContent.ColumnHeadersVisible = false;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = SystemColors.Window;
-            dataGridViewCellStyle1.Font = new Font("맑은 고딕", 9F, FontStyle.Regular, GraphicsUnit.Point);
-            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            grdContent.DefaultCellStyle = dataGridViewCellStyle1;
             grdContent.Dock = DockStyle.Fill;
             grdContent.Location = new Point(0, 48);
             grdContent.Name = "grdContent";
-            grdContent.ReadOnly = true;
-            grdContent.RowHeadersVisible = false;
-            grdContent.RowTemplate.Height = 25;
             grdContent.Size = new Size(800, 366);
             grdContent.TabIndex = 8;
-            grdContent.RowHeightInfoNeeded += grdContent_RowHeightInfoNeeded;
+            grdContent.Text = "";
             // 
             // QueueBrowsePopup
             // 
@@ -206,7 +189,6 @@
             pnlFilter.ResumeLayout(false);
             pnlFilter.PerformLayout();
             panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)grdContent).EndInit();
             ResumeLayout(false);
         }
 
@@ -221,7 +203,7 @@
         private CheckBox chkFilter;
         private Panel pnlFilter;
         private TextBox txtFilter;
-        private DataGridView grdContent;
+        private RichTextBox grdContent;
         private CheckBox chkAutoScroll;
     }
 }
