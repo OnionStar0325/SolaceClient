@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Newtonsoft.Json;
 using SolaceManagement;
 using SolaceSystems.Solclient.Messaging;
@@ -21,6 +21,8 @@ namespace SolaceClient
         List<Regex> ExcludePatterns = new List<Regex>();
 
         private List<string> _contentBuffer = new List<string>();
+        private List<int> _matchIndices = new List<int>();
+        private int _currentIndex = -1;
 
         public QueueBrowsePopup(IContext context, ConnectionInfo info)
         {
@@ -56,30 +58,65 @@ namespace SolaceClient
             string filterText = txtFilter.Text.Trim();
 
             // Clear previous highlights
-            grdContent.SelectAll();
-            grdContent.SelectionBackColor = grdContent.BackColor;
-            grdContent.DeselectAll();
+            txtContent.SelectAll();
+            txtContent.SelectionBackColor = txtContent.BackColor;
+            txtContent.DeselectAll();
+
+            _matchIndices.Clear();
+            _currentIndex = -1;
 
             if (string.IsNullOrEmpty(filterText))
             {
+                lblIndicator.Text = "0/0";
+                pnlIndicator.Visible = false;
                 return;
             }
 
+            pnlIndicator.Visible = true;
             int start = 0;
-            while (start < grdContent.Text.Length)
+            while (start < txtContent.Text.Length)
             {
-                int wordStartIndex = grdContent.Find(filterText, start, RichTextBoxFinds.None);
+                int wordStartIndex = txtContent.Find(filterText, start, RichTextBoxFinds.None);
                 if (wordStartIndex == -1)
                 {
                     break;
                 }
-                grdContent.SelectionStart = wordStartIndex;
-                grdContent.SelectionLength = filterText.Length;
-                grdContent.SelectionBackColor = Color.Yellow;
-
+                _matchIndices.Add(wordStartIndex);
                 start = wordStartIndex + filterText.Length;
             }
+
+            if (_matchIndices.Count > 0)
+            {
+                _currentIndex = 0;
+                NavigateToMatch();
+            }
+            UpdateIndicator();
         }
+
+        private void NavigateToMatch()
+        {
+            if (_currentIndex >= 0 && _currentIndex < _matchIndices.Count)
+            {
+                int position = _matchIndices[_currentIndex];
+                txtContent.Select(position, txtFilter.Text.Length);
+                txtContent.ScrollToCaret();
+                txtContent.Focus();
+            }
+            UpdateIndicator();
+        }
+
+        private void UpdateIndicator()
+        {
+            if (_matchIndices.Count > 0)
+            {
+                lblIndicator.Text = $"{_currentIndex + 1}/{_matchIndices.Count}";
+            }
+            else
+            {
+                lblIndicator.Text = "0/0";
+            }
+        }
+
 
         private void AutoScrollToBottom()
         {
@@ -88,15 +125,16 @@ namespace SolaceClient
                 return;
             }
 
-            grdContent.SelectionStart = grdContent.Text.Length;
-            grdContent.ScrollToCaret();
+            txtContent.SelectionStart = txtContent.Text.Length;
+            txtContent.ScrollToCaret();
         }
 
 
         private void QueueBrowsePopup_Load(object sender, EventArgs e)
         {
-            grdContent.ReadOnly = true;
-            grdContent.ScrollBars = RichTextBoxScrollBars.ForcedVertical;
+            txtContent.ReadOnly = true;
+            txtContent.ScrollBars = RichTextBoxScrollBars.ForcedVertical;
+            pnlIndicator.Visible = false;
         }
 
         private void btnListen_Click(object sender, EventArgs e)
@@ -144,7 +182,7 @@ namespace SolaceClient
                     sb.AppendLine(_contentBuffer[0]);
                     _contentBuffer.RemoveAt(0);
                 }
-                grdContent.AppendText(sb.ToString());
+                txtContent.AppendText(sb.ToString());
             }
             AutoScrollToBottom();
 
@@ -152,7 +190,7 @@ namespace SolaceClient
 
         private void QueueBrowser_OnMessageReceived(object? sender, BrowserEventArgs e)
         {
-            grdContent.Invoke((MethodInvoker)delegate
+            txtContent.Invoke((MethodInvoker)delegate
             {
                 if (e.Message != null)
                 {
@@ -176,7 +214,7 @@ namespace SolaceClient
                         {
                             content = JsonConvert.SerializeObject(JsonConvert.DeserializeObject(content), Newtonsoft.Json.Formatting.Indented);
                         }
-                        catch { }
+                        catch {{ }}
 
                     }
                     var log = String.Format("[{0}] Message ID[{1}]\n{2}\n", DateTime.Now.ToString("yyyyMMdd HH:mm:ss.fff"), e.Message.ADMessageId, content);
@@ -194,7 +232,7 @@ namespace SolaceClient
                                 sb.AppendLine(_contentBuffer[0]);
                                 _contentBuffer.RemoveAt(0);
                             }
-                            grdContent.AppendText(sb.ToString());
+                            txtContent.AppendText(sb.ToString());
 
                             AutoScrollToBottom();
                         }
@@ -210,7 +248,7 @@ namespace SolaceClient
 
         private void btnClear_Click(object sender, EventArgs e)
         {
-            grdContent.Clear();
+            txtContent.Clear();
         }
 
 
@@ -246,6 +284,24 @@ namespace SolaceClient
         private void chkAutoScroll_CheckedChanged(object sender, EventArgs e)
         {
             AutoScrollToBottom();
+        }
+
+        private void btnPrev_Click(object sender, EventArgs e)
+        {
+            if (_matchIndices.Count > 0)
+            {
+                _currentIndex = (_currentIndex - 1 + _matchIndices.Count) % _matchIndices.Count;
+                NavigateToMatch();
+            }
+        }
+
+        private void btnNext_Click(object sender, EventArgs e)
+        {
+            if (_matchIndices.Count > 0)
+            {
+                _currentIndex = (_currentIndex + 1) % _matchIndices.Count;
+                NavigateToMatch();
+            }
         }
     }
 }

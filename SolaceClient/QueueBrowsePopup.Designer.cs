@@ -1,4 +1,4 @@
-﻿namespace SolaceClient
+namespace SolaceClient
 {
     partial class QueueBrowsePopup
     {
@@ -37,12 +37,17 @@
             btnListen = new Button();
             txtQueue = new TextBox();
             pnlFilter = new Panel();
+            pnlIndicator = new Panel();
+            btnNext = new Button();
+            btnPrev = new Button();
+            lblIndicator = new Label();
             txtFilter = new TextBox();
             panel2 = new Panel();
             btnClear = new Button();
-            grdContent = new RichTextBox();
+            txtContent = new RichTextBox();
             pnlTop.SuspendLayout();
             pnlFilter.SuspendLayout();
+            pnlIndicator.SuspendLayout();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
@@ -58,7 +63,7 @@
             pnlTop.Dock = DockStyle.Top;
             pnlTop.Location = new Point(0, 0);
             pnlTop.Name = "pnlTop";
-            pnlTop.Size = new Size(800, 48);
+            pnlTop.Size = new Size(800, 90);
             pnlTop.TabIndex = 3;
             // 
             // chkAutoScroll
@@ -127,12 +132,52 @@
             // 
             // pnlFilter
             // 
+            pnlFilter.Controls.Add(pnlIndicator);
             pnlFilter.Controls.Add(txtFilter);
             pnlFilter.Location = new Point(23, 41);
             pnlFilter.Name = "pnlFilter";
             pnlFilter.Size = new Size(635, 49);
             pnlFilter.TabIndex = 8;
             pnlFilter.Visible = false;
+            // 
+            // pnlIndicator
+            // 
+            pnlIndicator.Controls.Add(btnNext);
+            pnlIndicator.Controls.Add(btnPrev);
+            pnlIndicator.Controls.Add(lblIndicator);
+            pnlIndicator.Location = new Point(422, 5);
+            pnlIndicator.Name = "pnlIndicator";
+            pnlIndicator.Size = new Size(200, 35);
+            pnlIndicator.TabIndex = 8;
+            // 
+            // btnNext
+            // 
+            btnNext.Location = new Point(144, 5);
+            btnNext.Name = "btnNext";
+            btnNext.Size = new Size(45, 23);
+            btnNext.TabIndex = 2;
+            btnNext.Text = "Next";
+            btnNext.UseVisualStyleBackColor = true;
+            btnNext.Click += btnNext_Click;
+            // 
+            // btnPrev
+            // 
+            btnPrev.Location = new Point(95, 5);
+            btnPrev.Name = "btnPrev";
+            btnPrev.Size = new Size(45, 23);
+            btnPrev.TabIndex = 1;
+            btnPrev.Text = "Prev";
+            btnPrev.UseVisualStyleBackColor = true;
+            btnPrev.Click += btnPrev_Click;
+            // 
+            // lblIndicator
+            // 
+            lblIndicator.AutoSize = true;
+            lblIndicator.Location = new Point(13, 9);
+            lblIndicator.Name = "lblIndicator";
+            lblIndicator.Size = new Size(26, 15);
+            lblIndicator.TabIndex = 0;
+            lblIndicator.Text = "0/0";
             // 
             // txtFilter
             // 
@@ -162,21 +207,21 @@
             btnClear.UseVisualStyleBackColor = true;
             btnClear.Click += btnClear_Click;
             // 
-            // grdContent
+            // txtContent
             // 
-            grdContent.Dock = DockStyle.Fill;
-            grdContent.Location = new Point(0, 48);
-            grdContent.Name = "grdContent";
-            grdContent.Size = new Size(800, 366);
-            grdContent.TabIndex = 8;
-            grdContent.Text = "";
+            txtContent.Dock = DockStyle.Fill;
+            txtContent.Location = new Point(0, 90);
+            txtContent.Name = "txtContent";
+            txtContent.Size = new Size(800, 324);
+            txtContent.TabIndex = 8;
+            txtContent.Text = "";
             // 
             // QueueBrowsePopup
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(grdContent);
+            Controls.Add(txtContent);
             Controls.Add(panel2);
             Controls.Add(pnlTop);
             Icon = (Icon)resources.GetObject("$this.Icon");
@@ -188,6 +233,8 @@
             pnlTop.PerformLayout();
             pnlFilter.ResumeLayout(false);
             pnlFilter.PerformLayout();
+            pnlIndicator.ResumeLayout(false);
+            pnlIndicator.PerformLayout();
             panel2.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -203,7 +250,11 @@
         private CheckBox chkFilter;
         private Panel pnlFilter;
         private TextBox txtFilter;
-        private RichTextBox grdContent;
+        private RichTextBox txtContent;
         private CheckBox chkAutoScroll;
+        private Panel pnlIndicator;
+        private Label lblIndicator;
+        private Button btnNext;
+        private Button btnPrev;
     }
 }
